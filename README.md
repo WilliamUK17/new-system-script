@@ -7,7 +7,7 @@ This will:
 5. Ensure that the correct version of Docker is installed based on your operating system.
 
 # Important Note
-As you always should please look over the script before running. It is safe to run but it is good practice to do.
+As you always should please look over the script before running. It is safe to run but it is good practice to do so.
 
 # Instructions
 Logged in as 'Root' user
