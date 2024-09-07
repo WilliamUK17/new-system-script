@@ -28,7 +28,7 @@ fi
 # Description of what the script does
 print_info "This script will:"
 echo "1. Add a new user with the specified username."
-echo "2. Copy the .ssh folder to the new user's home directory and set correct permissions."
+echo "2. Optionally copy the .ssh folder to the new user's home directory and set correct permissions."
 echo "3. Add the new user to the sudo group."
 echo "4. Install Docker and Docker Compose, and add the new user to the Docker group."
 echo "5. Ensure that the correct version of Docker is installed based on your operating system."
@@ -94,13 +94,20 @@ read -p "Enter the username you want to create: " username
 print_info "Adding user '$username'"
 adduser "$username"
 
-# Copy the .ssh folder to the new user's home directory
-print_info "Copying .ssh folder to /home/$username/"
-cp -r ~/.ssh /home/"$username"/
+# Ask if the user wants to copy the .ssh folder
+read -p "Do you want to copy the current .ssh folder to the new user's home directory? Also change the ownership of said directory? (y/n): " copy_ssh
 
-# Give ownership of the .ssh folder and its contents to the new user
-print_info "Changing ownership of .ssh to user '$username'"
-chown -R "$username":"$username" /home/"$username"/.ssh
+if [[ "$copy_ssh" == "y" ]]; then
+  # Copy the .ssh folder to the new user's home directory
+  print_info "Copying .ssh folder to /home/$username/"
+  cp -r ~/.ssh /home/"$username"/
+
+  # Give ownership of the .ssh folder and its contents to the new user
+  print_info "Changing ownership of .ssh to user '$username'"
+  chown -R "$username":"$username" /home/"$username"/.ssh
+else
+  print_info ".ssh folder will not be copied."
+fi
 
 # Add the user to the sudo group
 print_info "Adding user '$username' to the sudo group"
