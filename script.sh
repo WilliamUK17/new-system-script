@@ -106,5 +106,7 @@ print_info "Checking Docker and Docker Compose versions"
 docker --version
 docker-compose --version
 
+# Final message
 print_info "Setup Complete"
 echo -e "${GREEN}User $username has been created, added to sudo and docker groups, and Docker + Docker Compose installed.${NC}"
+print_warning "It is recommended to reboot the system to ensure all changes take effect."
