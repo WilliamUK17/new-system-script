@@ -27,9 +27,9 @@ fi
 
 # Description of what the script does
 print_info "This script will:"
-echo "1. Add a new user with the specified username."
+echo "1. Add one or more new users with the specified usernames."
 echo "2. Optionally copy the .ssh folder to the new user's home directory and set correct permissions."
-echo "3. Add the new user to the sudo group."
+echo "3. Optionally add the users to the sudo group."
 echo "4. Optionally install Docker and Docker Compose."
 
 # Ask the user if they want to continue
@@ -39,28 +39,47 @@ if [[ "$confirm" != "y" ]]; then
   exit 0
 fi
 
-# Ask for the username
-print_info "User Creation"
-read -p "Enter the username you want to create: " username
+# Function to add a user
+add_new_user() {
+  local username
+  read -p "Enter the username you want to create: " username
 
-# Add the new user
-print_info "Adding user '$username'"
-adduser "$username"
+  print_info "Adding user '$username'"
+  adduser "$username"
 
-# Ask if the user wants to copy the .ssh folder
-read -p "Do you want to copy the current .ssh folder to the new user's home directory? (y/n): " copy_ssh
+  # Ask if the user wants to copy the .ssh folder
+  read -p "Do you want to copy the current .ssh folder to the new user's home directory? (y/n): " copy_ssh
+  if [[ "$copy_ssh" == "y" ]]; then
+    print_info "Copying .ssh folder to /home/$username/"
+    cp -r ~/.ssh /home/"$username"/
+    chown -R "$username":"$username" /home/"$username"/.ssh
+  else
+    print_info ".ssh folder will not be copied."
+  fi
 
-if [[ "$copy_ssh" == "y" ]]; then
-  print_info "Copying .ssh folder to /home/$username/"
-  cp -r ~/.ssh /home/"$username"/
-  chown -R "$username":"$username" /home/"$username"/.ssh
-else
-  print_info ".ssh folder will not be copied."
-fi
+  # Ask if the user should be added to the sudo group
+  read -p "Do you want to add user '$username' to the sudo group? (y/n): " add_sudo
+  if [[ "$add_sudo" == "y" ]]; then
+    print_info "Adding user '$username' to the sudo group"
+    usermod -aG sudo "$username"
+  fi
 
-# Add the user to the sudo group
-print_info "Adding user '$username' to the sudo group"
-usermod -aG sudo "$username"
+  # Add the new user to the docker group later if Docker is installed
+  echo "$username"
+}
+
+# Add at least one user, then ask if more users should be added
+usernames=()
+usernames+=("$(add_new_user)")
+
+while true; do
+  read -p "Do you want to add another user? (y/n): " add_another_user
+  if [[ "$add_another_user" == "y" ]]; then
+    usernames+=("$(add_new_user)")
+  else
+    break
+  fi
+done
 
 # Ask if the user wants to install Docker
 read -p "Do you want to install Docker? (y/n): " install_docker
@@ -140,9 +159,11 @@ if [[ "$install_docker" == "y" ]]; then
   systemctl start docker
   systemctl enable docker
 
-  # Add the new user to the docker group
-  print_info "Adding user '$username' to the docker group"
-  usermod -aG docker "$username"
+  # Add the new users to the docker group
+  for username in "${usernames[@]}"; do
+    print_info "Adding user '$username' to the docker group"
+    usermod -aG docker "$username"
+  done
 
   # Ask if the user wants to install Docker Compose
   read -p "Do you want to install Docker Compose? (y/n): " install_docker_compose
@@ -163,5 +184,5 @@ fi
 
 # Final message
 print_info "Setup Complete"
-echo -e "${GREEN}User $username has been created, added to sudo, and Docker (if chosen) installed.${NC}"
+echo -e "${GREEN}Users ${usernames[*]} have been created, added to sudo (if chosen), and Docker (if chosen) installed.${NC}"
 print_warning "It is recommended to reboot the system to ensure all changes take effect."
