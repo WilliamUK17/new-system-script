@@ -3,8 +3,8 @@ This will:
 1. Add a new user with the specified username.
 2. Optionally copy the .ssh folder to the new user's home directory and set correct permissions.
 3. Add the new user to the sudo group.
-4. Install Docker and Docker Compose, and add the new user to the Docker group.
-5. Ensure that the correct version of Docker is installed based on your operating system.
+4. Optionally Install Docker and Docker Compose, and add the new user to the Docker group.
+5. Optionally Ensure that the correct version of Docker is installed based on your operating system.
 
 # Important Note
 As you always should please look over the script before running. It is safe to run but it is good practice to do so.
