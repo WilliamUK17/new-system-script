@@ -36,7 +36,8 @@ chmod +x script.sh
 sudo ./script.sh
 ```
 
-If you get a error saying wget is not installed you need to install this with your package manager for example for debian:
+If you get a error saying wget or curl is not installed you need to install this with your package manager for example for debian:
 ```
 sudo apt install wget
+sudo apt install curl
 ```
