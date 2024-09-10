@@ -22,6 +22,20 @@ wget https://raw.githubusercontent.com/WilliamUK17/new-system-script/main/script
 chmod +x script.sh
 sudo ./script.sh
 ```
+# Or you can use curl
+Logged in as 'Root' user
+```
+curl -o script.sh --url https://raw.githubusercontent.com/WilliamUK17/new-system-script/main/script.sh
+chmod +x script.sh
+./script.sh
+```
+Non-Root User
+```
+curl -o script.sh --url https://raw.githubusercontent.com/WilliamUK17/new-system-script/main/script.sh
+chmod +x script.sh
+sudo ./script.sh
+```
+
 If you get a error saying wget is not installed you need to install this with your package manager for example for debian:
 ```
 sudo apt install wget
