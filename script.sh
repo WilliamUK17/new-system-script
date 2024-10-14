@@ -75,9 +75,10 @@ if [[ "$install_docker" == "y" ]]; then
   echo "1. Debian 11 & 12"
   echo "2. Ubuntu 20.04 (Focal)"
   echo "3. Ubuntu 22.04 (Jammy)"
-  echo "4. Ubuntu 18.04 (Bionic)"
-  echo "5. Fedora"
-  echo "6. CentOS 7"
+  echo "4. Ubuntu 24.04 (Lunar)"
+  echo "5. Ubuntu 18.04 (Bionic)"
+  echo "6. Fedora"
+  echo "7. CentOS 7"
   read -p "Enter the number corresponding to your OS: " os_choice
 
   # Set up Docker repository and installation based on OS
@@ -98,15 +99,20 @@ if [[ "$install_docker" == "y" ]]; then
       DOCKER_CODENAME="jammy"
       ;;
     4)
+      print_info "Setting up Docker for Ubuntu 24.04 (Lunar)"
+      DOCKER_REPO="ubuntu"
+      DOCKER_CODENAME="lunar"
+      ;;
+    5)
       print_info "Setting up Docker for Ubuntu 18.04 (Bionic)"
       DOCKER_REPO="ubuntu"
       DOCKER_CODENAME="bionic"
       ;;
-    5)
+    6)
       print_info "Setting up Docker for Fedora"
       OS_TYPE="fedora"
       ;;
-    6)
+    7)
       print_info "Setting up Docker for CentOS 7"
       OS_TYPE="centos"
       ;;
@@ -117,7 +123,7 @@ if [[ "$install_docker" == "y" ]]; then
   esac
 
   # Docker installation steps for Debian/Ubuntu
-  if [[ "$os_choice" -ge 1 && "$os_choice" -le 4 ]]; then
+  if [[ "$os_choice" -ge 1 && "$os_choice" -le 5 ]]; then
     print_info "Installing Docker for Debian/Ubuntu"
     apt update
     apt install -y \
@@ -138,10 +144,10 @@ if [[ "$install_docker" == "y" ]]; then
     print_info "Installing Docker"
     apt update
     apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-  elif [[ "$os_choice" == "5" ]]; then
+  elif [[ "$os_choice" == "6" ]]; then
     print_info "Installing Docker for Fedora"
     dnf install -y docker
-  elif [[ "$os_choice" == "6" ]]; then
+  elif [[ "$os_choice" == "7" ]]; then
     print_info "Installing Docker for CentOS 7"
     yum install -y docker
   fi
